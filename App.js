@@ -15,6 +15,7 @@ import AccountSettingsScreen from "./screens/AccountSettingsScreen";
 import SignupScreen from "./screens/SignupScreen";
 import RestaurantReviewScreen from "./screens/RestaurantReviewScreen";
 import AllReviewsScreen from "./screens/AllReviewScreen";
+import ChooseAvatar from "./screens/ChooseAvatar";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 
@@ -35,10 +36,10 @@ const TabBarIcon = (props) => {
 const AuthStack = ({ handleLogin, handleSignup }) => {
   return (
     <MainStack.Navigator>
-      <MainStack.Screen name="Login" options={{ headerShown: true }}>
+      <MainStack.Screen name="Login" options={{ headerShown: false }}>
         {(props) => <LoginScreen {...props} handleLogin={handleLogin} />}
       </MainStack.Screen>
-      <MainStack.Screen name="Signup" options={{ headerShown: true }}>
+      <MainStack.Screen name="Signup" options={{ headerShown: false }}>
         {(props) => <SignupScreen {...props} handleSignup={handleSignup} />}
       </MainStack.Screen>
     </MainStack.Navigator>
@@ -70,6 +71,11 @@ const AccountSettingsStack = ({ userId, handleSignOut, onNameUpdate }) => {
           />
         )}
       </SettingsStack.Screen>
+      <SettingsStack.Screen
+        name="ChooseAvatar"
+        component={ChooseAvatar}
+        options={{ headerTitle: "Choose Avatar" }}
+      />
     </SettingsStack.Navigator>
   );
 };

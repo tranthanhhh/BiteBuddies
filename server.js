@@ -30,6 +30,9 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
   },
+  avatar: {
+    type: String,
+  },
 });
 
 const User = mongoose.model("User", userSchema);
@@ -142,7 +145,6 @@ app.post("/signup", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user with this email already exists
     const user = await User.findOne({ email });
     if (user) {
       return res
@@ -150,20 +152,16 @@ app.post("/signup", async (req, res) => {
         .json({ error: "User with this email already exists" });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
     const newUser = new User({
       email,
       password: hashedPassword,
     });
     await newUser.save();
 
-    // Generate a JWT token
     const token = jwt.sign({ userId: newUser._id }, "mysecretkey");
 
-    // Send the token to the client
     res.status(201).json({ token, userId: newUser._id });
   } catch (err) {
     console.log(err);
@@ -175,22 +173,18 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user with this email exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Check if password is correct
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Generate a JWT token
     const token = jwt.sign({ userId: user._id }, "mysecretkey");
 
-    // Send the token to the client
     res.status(200).json({ token, userId: user._id });
   } catch (err) {
     console.log(err);
@@ -371,6 +365,33 @@ app.delete("/deleteRestaurant", async (req, res) => {
   } catch (error) {
     console.error("Error deleting restaurant:", error);
     res.status(500).json({ message: "Error deleting restaurant" });
+  }
+});
+
+app.put("/users/:userId/avatar", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { avatar } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.avatar = avatar;
+    await user.save();
+
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+    });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ error: "Internal server error", message: err.message });
   }
 });
 

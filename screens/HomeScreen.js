@@ -229,8 +229,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    borderWidth: 1,
-    borderColor: "#6200ee",
+    backgroundColor: "#2f95dc",
     borderRadius: 4,
     padding: 8,
     paddingHorizontal: 16,
@@ -238,7 +237,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    color: "#6200ee",
+    color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
     alignSelf: "center",

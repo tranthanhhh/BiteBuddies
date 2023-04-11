@@ -10,10 +10,12 @@ import {
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import fetch from "cross-fetch";
+import { useNavigation } from "@react-navigation/native";
 
-const AccountSettingsScreen = ({ userId, onNameUpdate }) => {
+const AccountSettingsScreen = ({ userId, onNameUpdate, navigation }) => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [avatar, setAvatar] = useState("https://via.placeholder.com/150");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -24,6 +26,7 @@ const AccountSettingsScreen = ({ userId, onNameUpdate }) => {
         const data = await response.json();
         console.log("Updated user data:", data);
         setName(data.name);
+        setAvatar(data.avatar || "https://via.placeholder.com/150");
         onNameUpdate(data.name);
       } catch (error) {
         console.log("Error fetching user data:", error);
@@ -50,7 +53,7 @@ const AccountSettingsScreen = ({ userId, onNameUpdate }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name }),
+          body: JSON.stringify({ name, avatar }),
         }
       );
 
@@ -65,14 +68,13 @@ const AccountSettingsScreen = ({ userId, onNameUpdate }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Text style={styles.title}>Account Settings</Text>
-        <TouchableOpacity style={styles.avatarContainer}>
-          <Image
-            style={styles.avatar}
-            source={{
-              uri: "https://via.placeholder.com/150",
-            }}
-          />
+        <TouchableOpacity
+          style={styles.avatarContainer}
+          onPress={() =>
+            navigation.navigate("ChooseAvatar", { setAvatar, userId })
+          }
+        >
+          <Image style={styles.avatar} source={{ uri: avatar }} />
           <Text style={styles.changeAvatarText}>Change Avatar</Text>
         </TouchableOpacity>
         <View style={styles.form}>

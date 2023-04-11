@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     height: 250,
     alignSelf: "center",
     marginBottom: 20,
-    marginTop: 60,
+    marginTop: 150,
   },
 });
 

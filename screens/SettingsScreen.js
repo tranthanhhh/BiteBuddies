@@ -13,7 +13,7 @@ const SettingsScreen = ({
   const [user, setUser] = useState({
     name: "",
     email: "",
-    profilePicture: "https://via.placeholder.com/150",
+    avatar: "https://via.placeholder.com/150",
   });
 
   const handleNameUpdate = (newName) => {
@@ -32,7 +32,7 @@ const SettingsScreen = ({
             _id: userData._id.$oid,
             name: userData.name,
             email: userData.email,
-            profilePicture: "https://via.placeholder.com/150",
+            avatar: userData.avatar || "https://via.placeholder.com/150",
           });
         } catch (error) {
           console.log("Error fetching user data:", error);
@@ -47,10 +47,7 @@ const SettingsScreen = ({
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.profileImage}
-        source={{ uri: user.profilePicture }}
-      />
+      <Image style={styles.profileImage} source={{ uri: user.avatar }} />
       <Text style={styles.profileName}>{user.name}</Text>
       <Text style={styles.profileEmail}>{user.email}</Text>
       <Button
