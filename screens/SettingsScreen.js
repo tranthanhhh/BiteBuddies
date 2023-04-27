@@ -28,6 +28,7 @@ const SettingsScreen = ({
             `https://test-db-1-senior.herokuapp.com/users/${userId}`
           );
           const userData = await response.json();
+
           setUser({
             _id: userData._id.$oid,
             name: userData.name,
@@ -54,6 +55,7 @@ const SettingsScreen = ({
         mode="outlined"
         onPress={() =>
           navigation.navigate("AccountSettings", {
+            userId: userId,
             onNameUpdate: handleNameUpdate,
           })
         }

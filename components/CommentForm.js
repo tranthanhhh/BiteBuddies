@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// CommentForm.js
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -7,26 +8,26 @@ import {
   Text,
 } from "react-native";
 
-const CommentForm = ({ reviewId, onSubmit }) => {
-  const [name, setName] = useState("");
+const CommentForm = ({ reviewId, onSubmit, userId, userName }) => {
+  const [name, setName] = useState(userName || "");
   const [comment, setComment] = useState("");
 
+  useEffect(() => {
+    setName(userName);
+  }, [userName]);
+
   const handleSubmit = async () => {
+    console.log("Executing handleSubmit...");
+    console.log("Name:", name, "Comment:", comment);
     if (name && comment) {
+      console.log("Submitting comment...");
       await onSubmit(reviewId, name, comment);
-      setName("");
       setComment("");
     }
   };
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Your Name"
-        value={name}
-        onChangeText={setName}
-      />
       <TextInput
         style={styles.input}
         placeholder="Your Comment"

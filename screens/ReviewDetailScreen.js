@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,46 @@ import {
 import CommentForm from "../components/CommentForm";
 import CommentsList from "../components/CommentList";
 
-export default function ReviewDetailScreen({ route }) {
+export default function ReviewDetailScreen({ route, userId }) {
   const { review } = route.params;
   const [comments, setComments] = useState([]);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    console.log("User ID:", userId);
+
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(
+          `https://test-db-1-senior.herokuapp.com/users/${userId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Something went wrong while fetching the user data");
+        }
+
+        const user = await response.json();
+        console.log("User data fetched:", user);
+        setUserName(user.name || user.email);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    if (userId) {
+      fetchUser();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    console.log("userName state updated:", userName);
+  }, [userName]);
 
   const handleCommentSubmit = async (reviewId, name, comment) => {
+    console.log("Handling comment submit...");
+
     try {
+      console.log("Submitting comment to the API...");
       const response = await fetch(
         `https://test-db-1-senior.herokuapp.com/reviews/${reviewId}/comments`,
         {
@@ -30,6 +64,8 @@ export default function ReviewDetailScreen({ route }) {
       if (!response.ok) {
         throw new Error("Something went wrong while submitting the comment");
       }
+
+      console.log("Fetching updated comments...");
       const updatedComments = await fetch(
         `https://test-db-1-senior.herokuapp.com/reviews/${reviewId}/comments`
       );
@@ -47,7 +83,12 @@ export default function ReviewDetailScreen({ route }) {
           <Text style={styles.reviewName}>{review.name}</Text>
           <Text style={styles.reviewBody}>{review.body}</Text>
           <Text style={styles.reviewRating}>Rating: {review.rating}</Text>
-          <CommentForm reviewId={review._id} onSubmit={handleCommentSubmit} />
+          <CommentForm
+            reviewId={review._id}
+            onSubmit={handleCommentSubmit}
+            userId={userId}
+            userName={userName}
+          />
           <CommentsList
             reviewId={review._id}
             comments={comments}
