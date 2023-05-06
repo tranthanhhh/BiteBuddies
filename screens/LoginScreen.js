@@ -10,12 +10,14 @@ import { TextInput, Button, HelperText } from "react-native-paper";
 import axios from "axios";
 
 const Login = ({ navigation, handleLogin }) => {
+  // Declare state variables for email, password, and error
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  // Function to log in the user
   const login = async () => {
     try {
+      // Send a POST request to the login API with email and password
       const response = await axios.post(
         "https://test-db-1-senior.herokuapp.com/login",
         {
@@ -23,6 +25,7 @@ const Login = ({ navigation, handleLogin }) => {
           password,
         }
       );
+      // Extract token and userId from the response
       const { token, userId } = response.data;
       console.log("Login successful, token:", token);
       setError("");
@@ -31,7 +34,7 @@ const Login = ({ navigation, handleLogin }) => {
       setError("Invalid credentials");
     }
   };
-
+  // Render the login component
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

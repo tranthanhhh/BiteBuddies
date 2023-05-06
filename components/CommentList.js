@@ -1,3 +1,12 @@
+//The code defines a component called CommentsList that takes in reviewId, comments, setComments, and userName as props.
+//It fetches comments from a remote server and displays them in a flat list.
+//It also allows users to reply to comments and updates the comments with the replies.
+//The component uses several hooks such as useState and useEffect.
+//The code defines a component called CommentsList that takes in reviewId, comments, setComments, and userName as props.
+//It fetches comments from a remote server and displays them in a flat list.
+//It also allows users to reply to comments and updates the comments with the replies.
+//The component uses several hooks such as useState and useEffect.
+
 import React, { useState, useEffect } from "react";
 import {
   View,

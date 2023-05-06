@@ -16,7 +16,7 @@ const CollectionScreen = ({ userId, navigation }) => {
   const updateSavedRestaurants = () => {
     fetchSavedRestaurants();
   };
-
+  // Use the useEffect hook to update saved restaurants when the component is focused
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       updateSavedRestaurants();
@@ -24,7 +24,7 @@ const CollectionScreen = ({ userId, navigation }) => {
 
     return unsubscribe;
   }, [navigation]);
-
+  // Define the fetchSavedRestaurants function to fetch saved restaurants data from the server
   const fetchSavedRestaurants = async () => {
     try {
       console.log("Fetching saved restaurants for user:", userId);
@@ -41,7 +41,7 @@ const CollectionScreen = ({ userId, navigation }) => {
       console.error("Error fetching saved restaurants:", error);
     }
   };
-
+  // Define the deleteRestaurant function to delete a restaurant from the user's collection
   const deleteRestaurant = async (restaurantId) => {
     try {
       await axios.delete(
@@ -52,7 +52,7 @@ const CollectionScreen = ({ userId, navigation }) => {
       console.error("Error deleting restaurant:", error);
     }
   };
-
+  // Define the renderItem function to render a restaurant item in the FlatList
   const renderItem = ({ item }) => {
     return (
       <View style={styles.restaurantContainer}>
@@ -76,7 +76,7 @@ const CollectionScreen = ({ userId, navigation }) => {
       </View>
     );
   };
-
+  // Render the CollectionScreen component
   return (
     <View style={styles.container}>
       {savedRestaurants.length > 0 ? (

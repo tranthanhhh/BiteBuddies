@@ -3,10 +3,11 @@ import { View, Text, StyleSheet } from "react-native";
 
 const CommentsList = ({ reviewId }) => {
   const [comments, setComments] = useState([]);
-
+  // Use the useEffect hook to fetch comments when the component mounts
   useEffect(() => {
     const fetchComments = async () => {
       try {
+        // Fetch comments from the server for a specific review// Fetch comments from the server for a specific review
         const response = await fetch(
           `https://test-db-1-senior.herokuapp.com/reviews/${reviewId}/comments`
         );
@@ -14,17 +15,17 @@ const CommentsList = ({ reviewId }) => {
         if (!response.ok) {
           throw new Error("Something went wrong while fetching the comments");
         }
-
+        // Get the fetched comments data and update the state
         const fetchedComments = await response.json();
         setComments(fetchedComments);
       } catch (error) {
         console.error("Error fetching comments:", error);
       }
     };
-
+    // Call the fetchComments function
     fetchComments();
   }, [reviewId]);
-
+  // Render the CommentsList component
   return (
     <View style={styles.container}>
       {comments.map((comment) => (

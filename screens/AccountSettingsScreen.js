@@ -1,3 +1,10 @@
+//Allowing users to update their name and avatar.
+//The component uses state to keep track of the user's name, loading state, and avatar, and useEffect to fetch the user's data from the backend API.
+//The screen also allows the user to change their avatar by navigating to the ChooseAvatar screen, passing in a function to update the avatar state.
+//The component renders a TouchableWithoutFeedback component to dismiss the keyboard when the user taps outside the text input.
+//The TextInput component is used to allow the user to update their name,
+//and the Button component is used to save the changes to the backend API.
+
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -10,7 +17,6 @@ import {
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import fetch from "cross-fetch";
-import { useNavigation } from "@react-navigation/native";
 
 const AccountSettingsScreen = ({ userId, onNameUpdate, navigation }) => {
   const [name, setName] = useState("");

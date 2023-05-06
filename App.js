@@ -1,3 +1,4 @@
+// import necessary screens and components
 import "react-native-gesture-handler";
 import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
@@ -18,11 +19,11 @@ import AllReviewsScreen from "./screens/AllReviewScreen";
 import ChooseAvatar from "./screens/ChooseAvatar";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
-
+// create stack, tab navigation
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const SettingsStack = createStackNavigator();
-
+// style the tab
 const TabBarIcon = (props) => {
   return (
     <Ionicons
@@ -32,7 +33,7 @@ const TabBarIcon = (props) => {
     />
   );
 };
-
+// Rendering the login screen and sign up screen. handleLogin, handleSignUp are passed as props
 const AuthStack = ({ handleLogin, handleSignup }) => {
   return (
     <MainStack.Navigator>
@@ -45,7 +46,8 @@ const AuthStack = ({ handleLogin, handleSignup }) => {
     </MainStack.Navigator>
   );
 };
-
+// efine the AccountSettingsStack component, responsible for rendering the SettingsScreen,
+//AccountSettingsScreen, and ChooseAvatar screens. The userId, handleSignOut, and onNameUpdate functions are passed as props.
 const AccountSettingsStack = ({ userId, handleSignOut, onNameUpdate }) => {
   return (
     <SettingsStack.Navigator>
@@ -79,12 +81,12 @@ const AccountSettingsStack = ({ userId, handleSignOut, onNameUpdate }) => {
     </SettingsStack.Navigator>
   );
 };
-
+// Define the App component that manages the state of user authentication and user data.
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState({});
-
+  // Define the handleLogin, handleSignup, handleSignOut, and handleNameUpdate functions for managing user state and actions.
   const handleLogin = (userId) => {
     setAuthenticated(true);
     setUserId(userId);
@@ -103,6 +105,9 @@ export default function App() {
   const handleNameUpdate = (newName) => {
     setUser((prevUser) => ({ ...prevUser, name: newName }));
   };
+  //Define the HomeStack component, responsible for rendering the HomeScreen, RestaurantDetailScreen,
+  //RestaurantReviewScreen, ReviewDetailScreen, AccountSettingsScreen, and AllReviewsScreen.
+  //The userId prop is passed to the screens.
   const HomeStack = () => {
     return (
       <MainStack.Navigator>
@@ -144,6 +149,8 @@ export default function App() {
   };
 
   return (
+    // If the user is authenticated, render the Tab.Navigator with the following tab screens.
+    // Otherwise, render the MainStack.Navigator with the AuthStack.
     <NavigationContainer>
       {authenticated ? (
         <Tab.Navigator>
@@ -206,6 +213,7 @@ export default function App() {
           </Tab.Screen>
         </Tab.Navigator>
       ) : (
+        // If the user is not authenticated, the MainStack.Navigator renders the AuthStack
         <MainStack.Navigator>
           <MainStack.Screen name="Auth" options={{ headerShown: false }}>
             {(props) => (

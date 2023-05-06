@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Button } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
-
+// Main SettingsScreen component
 const SettingsScreen = ({
   userId,
   handleSignOut,
@@ -10,16 +10,17 @@ const SettingsScreen = ({
   onNameUpdate,
 }) => {
   console.log("SettingsScreen userId:", userId);
+  // Declare state variable for the user object
   const [user, setUser] = useState({
     name: "",
     email: "",
     avatar: "https://via.placeholder.com/150",
   });
-
+  // Function to update the user's name
   const handleNameUpdate = (newName) => {
     setUser((prevUser) => ({ ...prevUser, name: newName }));
   };
-
+  // Fetch user data when the component is in focus
   useFocusEffect(
     React.useCallback(() => {
       const fetchUserData = async () => {
@@ -45,6 +46,7 @@ const SettingsScreen = ({
       }
     }, [userId])
   );
+  // Render the main SettingsScreen component
 
   return (
     <View style={styles.container}>
@@ -65,6 +67,7 @@ const SettingsScreen = ({
       </Button>
 
       <Button
+        // Sign out button, the handleSignOut function is defined in App.js
         mode="outlined"
         onPress={handleSignOut}
         style={styles.signOutButton}

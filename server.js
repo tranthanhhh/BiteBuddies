@@ -16,7 +16,7 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
-// Create a schema
+// Create a user schema
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model("User", userSchema);
-
+// Create a review schema
 const reviewSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -58,6 +58,7 @@ const reviewSchema = new mongoose.Schema({
 
 const Review = mongoose.model("Review", reviewSchema);
 
+// Old saved restaurant schema- don't use it anymore
 const savedRestaurantSchema = new mongoose.Schema({
   id: {
     type: String,
@@ -84,6 +85,7 @@ const SavedRestaurant = mongoose.model(
   savedRestaurantSchema
 );
 
+// Create a saved restaurant schema for user's collection
 const RestaurantSchema = new mongoose.Schema({
   id: String,
   name: String,
@@ -105,6 +107,7 @@ const RestaurantSchema = new mongoose.Schema({
 
 const Restaurant = mongoose.model("Restaurant", RestaurantSchema);
 
+// Create a comment schema, and replies
 const CommentSchema = new mongoose.Schema({
   name: String,
   text: String,
@@ -120,7 +123,7 @@ const CommentSchema = new mongoose.Schema({
 });
 
 const Comment = mongoose.model("Comment", CommentSchema);
-
+// Create restaurant's comment schema
 const RestaurantCommentSchema = new mongoose.Schema({
   restaurantId: {
     type: String,
@@ -158,7 +161,7 @@ app.post("/signup", async (req, res) => {
         .status(400)
         .json({ error: "User with this email already exists" });
     }
-
+    // hash user's password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -166,7 +169,7 @@ app.post("/signup", async (req, res) => {
       password: hashedPassword,
     });
     await newUser.save();
-
+    // new user is saved to the database, a JSON Web Token is created for the users.
     const token = jwt.sign({ userId: newUser._id }, "mysecretkey");
 
     res.status(201).json({ token, userId: newUser._id });
@@ -176,6 +179,9 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// Login route. The route receives email and password from the body.
+// Cjecks if a user exists in the database, and returns an error if not.
+// If the email is found, the provided password is compared to the stored hashed password using bcrypt.
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -199,6 +205,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Get all users. Retrieves all user documents from the database
 app.get("/users", async (req, res) => {
   try {
     const users = await User.find({});
@@ -208,7 +215,7 @@ app.get("/users", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Get a specific user.
 app.get("/users/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -226,7 +233,7 @@ app.get("/users/:userId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Create a new review, it receives name, body, rating from the requested body.
 app.post("/reviews", async (req, res) => {
   try {
     const { name, body, rating } = req.body;
@@ -238,7 +245,7 @@ app.post("/reviews", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Get all reviews.
 app.get("/reviews", async (req, res) => {
   try {
     const reviews = await Review.find({}).sort({ createdAt: -1 });
@@ -248,7 +255,7 @@ app.get("/reviews", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Old saved restaurant - Don't use anymore
 app.post("/saveRestaurant", async (req, res) => {
   try {
     const { userId, ...restaurantData } = req.body;
@@ -260,7 +267,7 @@ app.post("/saveRestaurant", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Save a specific restaurant to user's colection
 app.get("/getSavedRestaurants", async (req, res) => {
   try {
     const { userId } = req.query;
@@ -277,7 +284,7 @@ app.get("/getSavedRestaurants", async (req, res) => {
     res.status(500).json({ message: "Error fetching saved restaurants" });
   }
 });
-
+// Create a new comment for review.
 app.post("/reviews/:reviewId/comments", async (req, res) => {
   try {
     const { name, text } = req.body;
@@ -290,7 +297,7 @@ app.post("/reviews/:reviewId/comments", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Get all comments for a specific review.
 app.get("/reviews/:reviewId/comments", async (req, res) => {
   try {
     const { reviewId } = req.params;
@@ -301,7 +308,7 @@ app.get("/reviews/:reviewId/comments", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Update user name
 app.put("/users/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -327,7 +334,7 @@ app.put("/users/:userId", async (req, res) => {
       .json({ error: "Internal server error", message: err.message });
   }
 });
-
+// Get all the comment for a specific restaurant
 app.get("/restaurants/:restaurantId/comments", async (req, res) => {
   try {
     const { restaurantId } = req.params;
@@ -341,7 +348,7 @@ app.get("/restaurants/:restaurantId/comments", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Post a new comment for a specific restaurant
 app.post("/restaurants/:restaurantId/comments", async (req, res) => {
   try {
     const { name, text } = req.body;
@@ -355,7 +362,7 @@ app.post("/restaurants/:restaurantId/comments", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+// Delete the saved restaurant from user's collection
 app.delete("/deleteRestaurant", async (req, res) => {
   try {
     const { userId, restaurantId } = req.query;
@@ -374,7 +381,7 @@ app.delete("/deleteRestaurant", async (req, res) => {
     res.status(500).json({ message: "Error deleting restaurant" });
   }
 });
-
+// Update user's avatar. It can save the url of the avatar in the database but cannot display on the setting screen.
 app.put("/users/:userId/avatar", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -400,6 +407,7 @@ app.put("/users/:userId/avatar", async (req, res) => {
       .status(500)
       .json({ error: "Internal server error", message: err.message });
   }
+  // Create a reply for the comment of a restaurant
   app.post("/comments/:commentId/replies", async (req, res) => {
     try {
       const { name, text } = req.body;
@@ -417,7 +425,7 @@ app.put("/users/:userId/avatar", async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     }
   });
-
+  // Get all replies for a restaurant
   app.get("/comments/:commentId/replies", async (req, res) => {
     try {
       const { commentId } = req.params;

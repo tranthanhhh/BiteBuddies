@@ -13,6 +13,8 @@ import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function RestaurantDetailScreen({ userId, navigation }) {
+  // Declare state variables for restaurants,
+  // current restaurant index, position, location, error message, loading status, and selected restaurant
   const [restaurants, setRestaurants] = useState([]);
   const [currentRestaurantIndex, setCurrentRestaurantIndex] = useState(0);
   const [position, setPosition] = useState(new Animated.ValueXY());
@@ -20,11 +22,11 @@ export default function RestaurantDetailScreen({ userId, navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-
+  // Fetch user's location on component mount
   useEffect(() => {
     fetchLocation();
   }, []);
-
+  // Function to request location permission and get the current position
   const fetchLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -36,7 +38,7 @@ export default function RestaurantDetailScreen({ userId, navigation }) {
     setLocation(location);
     fetchRestaurants(location.coords.latitude, location.coords.longitude);
   };
-
+  // Function to fetch nearby restaurants based on user's location
   const fetchRestaurants = async (latitude, longitude) => {
     setLoading(true);
     try {
@@ -75,14 +77,14 @@ export default function RestaurantDetailScreen({ userId, navigation }) {
       setLoading(false);
     }
   };
-
+  // Function to handle the press event on a restaurant card
   const handleCardPress = (restaurant) => {
     navigation.navigate("RestaurantReview", {
       restaurantId: restaurant.id,
       userId: userId,
     });
   };
-
+  // Function to render a restaurant card
   const renderCard = (restaurant) => {
     return (
       <TouchableHighlight
@@ -104,7 +106,7 @@ export default function RestaurantDetailScreen({ userId, navigation }) {
       </TouchableHighlight>
     );
   };
-
+  // Render the main RestaurantDetailScreen component
   return (
     <View style={styles.container}>
       {loading && <Text>Loading...</Text>}

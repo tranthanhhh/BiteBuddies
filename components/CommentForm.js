@@ -1,4 +1,11 @@
-// CommentForm.js
+// This component is responsible for rendering a form for submitting comments.
+// It receives props for the review ID, the onSubmit function, the user ID, and the user name.
+// It uses state hooks to manage the values of the name and comment inputs.
+// It also includes an effect hook to update the name input if the userName prop changes.
+// The handleSubmit function is triggered when the user submits the form, and it calls the onSubmit prop function with the review ID, name, and comment values.
+// If the name and comment are both non-empty, the comment input is cleared.
+// The styles define the appearance of the container, input field, button, and button text.
+
 import React, { useState, useEffect } from "react";
 import {
   View,

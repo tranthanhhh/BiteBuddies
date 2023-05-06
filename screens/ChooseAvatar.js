@@ -1,3 +1,6 @@
+// Allows users to choose an avatar from a predefined list.
+// Not working, only display the avatars.
+
 import axios from "axios";
 import React from "react";
 import {
@@ -22,6 +25,8 @@ const ChooseAvatar = ({ navigation, route }) => {
       route.params.setAvatar(selectedAvatar);
     }
     if (route.params && route.params.userId) {
+      // if route.params.userId is provided, sends PUT request to update user's avatar in the backend.
+      // if route.params.setAvatar is provided, calls the function with the selected avatar.
       try {
         await axios.put(
           `https://test-db-1-senior.herokuapp.com/users/${route.params.userId}/avatar`,
@@ -33,7 +38,7 @@ const ChooseAvatar = ({ navigation, route }) => {
         console.error("Error updating avatar:", error);
       }
     }
-
+    // navigate back to the previous screen
     navigation.goBack();
   };
 

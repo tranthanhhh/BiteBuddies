@@ -11,10 +11,11 @@ import CommentForm from "../components/CommentForm";
 import CommentsList from "../components/CommentList";
 
 export default function ReviewDetailScreen({ route, userId }) {
+  // Declare state variables for comments and user's name
   const { review } = route.params;
   const [comments, setComments] = useState([]);
   const [userName, setUserName] = useState("");
-
+  // Fetch user data on component mount
   useEffect(() => {
     console.log("User ID:", userId);
 
@@ -40,10 +41,11 @@ export default function ReviewDetailScreen({ route, userId }) {
       fetchUser();
     }
   }, [userId]);
-
+  // Log the updated userName
   useEffect(() => {
     console.log("userName state updated:", userName);
   }, [userName]);
+  // Function to handle comment submission
 
   const handleCommentSubmit = async (reviewId, name, comment) => {
     console.log("Handling comment submit...");
@@ -75,7 +77,7 @@ export default function ReviewDetailScreen({ route, userId }) {
       console.error("Error submitting the comment:", error);
     }
   };
-
+  // Render the main ReviewDetailScreen component
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

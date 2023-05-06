@@ -9,10 +9,12 @@ import {
 import axios from "axios";
 
 function Reply({ userName, commentId, onUpdateReplies }) {
+  // Set up state to keep track of the reply text
   const [text, setText] = useState("");
-
+  // Define a function to handle the submission of the reply
   const handleSubmit = async () => {
     try {
+      // Use Axios to make a POST request to the server with the reply data
       const response = await axios.post(
         `https://test-db-1-senior.herokuapp.com/comments/${commentId}/replies`,
         {
@@ -29,7 +31,7 @@ function Reply({ userName, commentId, onUpdateReplies }) {
       console.error(error);
     }
   };
-
+  // Render a form for entering the reply text and a button to submit the reply
   return (
     <View>
       <TextInput

@@ -9,19 +9,20 @@ import {
 import axios from "axios";
 
 const AllReviewsScreen = ({ navigation }) => {
+  // Declare a state variable for the reviews array
   const [reviews, setReviews] = useState([]);
-
+  // Use the useEffect hook to fetch reviews when the component mounts
   useEffect(() => {
     fetchReviews();
   }, []);
-
+  // Define the fetchReviews function to fetch reviews data from the server
   const fetchReviews = async () => {
     const response = await axios.get(
       "https://test-db-1-senior.herokuapp.com/reviews"
     );
     setReviews(response.data);
   };
-
+  // Define the renderItem function to render a review item in the FlatList
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
@@ -35,7 +36,7 @@ const AllReviewsScreen = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
-
+  // Render the AllReviewsScreen component
   return (
     <View style={styles.container}>
       <FlatList

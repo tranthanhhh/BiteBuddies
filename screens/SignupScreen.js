@@ -10,15 +10,16 @@ import { TextInput, Button, HelperText } from "react-native-paper";
 import axios from "axios";
 
 const Signup = ({ navigation }) => {
+  // Declare state variables for email, password, and error messages
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  // Function to handle successful signup and navigate to Login screen
   const handleSignup = (userId) => {
     console.log("User ID:", userId);
     navigation.navigate("Login");
   };
-
+  // Functions to validate email and password formats
   const isValidEmail = (email) => {
     const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
     return emailRegex.test(email);
@@ -28,8 +29,11 @@ const Signup = ({ navigation }) => {
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     return passwordRegex.test(password);
   };
-
+  // Main signup function to create a new user
   const signup = async () => {
+    // Validate email and password
+    // Make API request to create a new user
+    // Handle success and error cases
     if (!isValidEmail(email)) {
       setError("Please enter a valid email address");
       return;
@@ -58,7 +62,7 @@ const Signup = ({ navigation }) => {
       setError("User with this email already exists");
     }
   };
-
+  // Render the main Signup component
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

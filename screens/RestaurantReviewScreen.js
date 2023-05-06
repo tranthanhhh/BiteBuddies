@@ -15,6 +15,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function RestaurantReviewScreen({ route, userId }) {
+  // Declare state variables
   const { restaurantId, updateSavedRestaurants } = route.params;
   const [restaurant, setRestaurant] = useState(null);
   const [comments, setComments] = useState([]);
@@ -24,6 +25,7 @@ export default function RestaurantReviewScreen({ route, userId }) {
   const [replyInput, setReplyInput] = useState({});
 
   const [replyInputVisible, setReplyInputVisible] = useState(null);
+  // Fetches restaurant details from Yelp API using the given restaurantId
 
   const fetchRestaurantDetails = async (restaurantId) => {
     try {
@@ -48,7 +50,7 @@ export default function RestaurantReviewScreen({ route, userId }) {
       fetchComments(restaurantId);
     }
   }, [restaurantId]);
-
+  // Fetches user details using the given userId from the backend
   const fetchUserDetails = async (userId) => {
     try {
       const response = await axios.get(
@@ -65,7 +67,7 @@ export default function RestaurantReviewScreen({ route, userId }) {
       fetchUserDetails(userId);
     }
   }, [userId]);
-
+  // Fetches comments for the given restaurantId from the backend and sets up replies for each comment
   const fetchComments = async (restaurantId) => {
     try {
       const response = await axios.get(
@@ -92,7 +94,7 @@ export default function RestaurantReviewScreen({ route, userId }) {
       console.error("Error fetching comments:", error);
     }
   };
-
+  // Posts a new comment for the restaurant and updates the comments list
   const handlePostComment = async () => {
     if (commentInput.trim() !== "" && user) {
       const userName = user.name || user.email;
@@ -112,6 +114,7 @@ export default function RestaurantReviewScreen({ route, userId }) {
       }
     }
   };
+  // Saves the restaurant to the user's saved restaurants list in the backend
 
   const handleSavePress = async () => {
     try {
@@ -128,6 +131,7 @@ export default function RestaurantReviewScreen({ route, userId }) {
       console.error("Error saving restaurant:", error);
     }
   };
+  // Posts a new reply for a comment and updates the replies list
 
   const handlePostReply = async (commentId, replyText) => {
     if (replyText.trim() !== "" && user) {
@@ -156,14 +160,16 @@ export default function RestaurantReviewScreen({ route, userId }) {
       }
     }
   };
-
+  // Render the list of comments and also the reply
   const renderComments = () => {
     return comments.slice(0, 5).map((comment) => {
+      // For each comment, it creates a View with a unique key
       return (
         <View key={comment._id} style={styles.commentContainer}>
           <Text style={styles.commentAuthor}>{comment.name}</Text>
           <Text style={styles.commentText}>{comment.text}</Text>
           {replies[comment._id]?.map((reply, index) => (
+            // Maps through the replies objects to check if there are ant replies for the current comment
             <View key={index} style={styles.commentContainer}>
               <Text style={styles.commentAuthor}>{reply.name}</Text>
               <Text style={styles.commentText}>{reply.text}</Text>
@@ -186,6 +192,7 @@ export default function RestaurantReviewScreen({ route, userId }) {
                 }
               />
               <TouchableOpacity
+                // When pressed, it calls the handlePostReply function to post the reply and resets the input value for the current comment's _id.
                 style={styles.replyButton}
                 onPress={() => {
                   handlePostReply(comment._id, replyInput[comment._id]);
@@ -200,7 +207,7 @@ export default function RestaurantReviewScreen({ route, userId }) {
       );
     });
   };
-
+  // Return the data of the selected restaurants and comment section for the restaurant
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView

@@ -13,7 +13,7 @@ import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
 import { SearchBar } from "react-native-elements";
 import axios from "axios";
-
+// RestaurantDetails component displays restaurant information
 const RestaurantDetails = ({ restaurant }) => (
   <View style={styles.detailsContainer}>
     <Image style={styles.image} source={{ uri: restaurant.image_url }} />
@@ -22,8 +22,10 @@ const RestaurantDetails = ({ restaurant }) => (
     <Text style={styles.phone}>{restaurant.phone}</Text>
   </View>
 );
-
+// Main component
 export default function App() {
+  // Declare state variables for location, error message, nearby restaurants,
+  //selected restaurant, search term, suggestions, and selected suggestion
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [nearbyRestaurants, setNearbyRestaurants] = useState([]);
@@ -31,7 +33,7 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
-
+  // Request user's location permission and get the current position
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -44,7 +46,7 @@ export default function App() {
       setLocation(location);
     })();
   }, []);
-
+  // Fetch nearby restaurants based on the user's location and search term
   useEffect(() => {
     if (location) {
       const fetchNearbyRestaurants = async () => {
@@ -63,7 +65,7 @@ export default function App() {
       fetchNearbyRestaurants();
     }
   }, [location, searchTerm]);
-
+  // Handle search input changes and fetch suggestions
   const handleSearchChange = async (text) => {
     setSearchTerm(text);
     if (text.length > 0) {
@@ -81,7 +83,7 @@ export default function App() {
       setSuggestions([]);
     }
   };
-
+  // Handle selection of a suggestion
   const handleSuggestionSelect = (suggestion) => {
     setSelectedRestaurant(null);
     setSuggestions([]);
@@ -100,10 +102,14 @@ export default function App() {
       </View>
     );
   }
-
+  // Render the main App component
   return (
     <View style={styles.container}>
       <SearchBar
+        // Search bar for searching restaurants
+        // Display suggestions if any
+        // MapView to display user's location and nearby restaurants
+        // Modal to display selected restaurant details
         placeholder="Search for a restaurant"
         onChangeText={handleSearchChange}
         value={searchTerm}
@@ -122,6 +128,7 @@ export default function App() {
       )}
 
       <MapView
+        // Get the coordinate of the restaurant for markers on map
         style={styles.map}
         initialRegion={{
           latitude: location ? location.coords.latitude : 34.366667,
@@ -160,6 +167,7 @@ export default function App() {
       </MapView>
 
       <Modal
+        // Modal pop up when users click on the marker
         visible={selectedRestaurant !== null}
         onRequestClose={() => setSelectedRestaurant(null)}
         animationType="slide"

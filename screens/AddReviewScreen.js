@@ -11,12 +11,14 @@ import {
 import { Rating } from "react-native-ratings";
 
 const AddReviewScreen = () => {
+  // Declare state variables for the review's title, body, and rating
   const [name, setName] = useState("");
   const [body, setBody] = useState("");
   const [rating, setRating] = useState(0);
-
+  // Define the handleSubmit function to submit the review data
   const handleSubmit = async () => {
     try {
+      // Send a POST request with the review data to the server
       const response = await fetch(
         "https://test-db-1-senior.herokuapp.com/reviews",
         {
@@ -31,23 +33,23 @@ const AddReviewScreen = () => {
           }),
         }
       );
-
+      // Check if the response is OK, otherwise throw an error
       if (!response.ok) {
         throw new Error("An error occurred while submitting the review.");
       }
-
+      // Parse the response data and reset the state variables
       const responseData = await response.json();
       console.log(responseData);
-      // alert("Review submitted successfully!");
       setName("");
       setBody("");
       setRating(0);
     } catch (error) {
+      // Log the error and display an alert to the user
       console.log(error);
       alert("An error occurred. Please try again.");
     }
   };
-
+  // Render the AddReviewScreen component
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

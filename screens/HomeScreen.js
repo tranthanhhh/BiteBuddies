@@ -13,10 +13,11 @@ import axios from "axios";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
-
+// Get device width for styling purposes
 const { width } = Dimensions.get("window");
 
 export default function HomeScreen({ navigation, userId }) {
+  // Set up state variables
   const [restaurants, setRestaurants] = useState([]);
   const [currentRestaurantIndex, setCurrentRestaurantIndex] = useState(0);
   const [position, setPosition] = useState(new Animated.ValueXY());
@@ -24,23 +25,24 @@ export default function HomeScreen({ navigation, userId }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
-
+  // Function to fetch reviews from API
   const fetchReviews = async () => {
     const response = await axios.get(
       "https://test-db-1-senior.herokuapp.com/reviews"
     );
     setReviews(response.data);
   };
-
+  // Run on component mount
   useEffect(() => {
     fetchLocation();
   }, []);
+  // Run when the screen is focused
   useFocusEffect(
     React.useCallback(() => {
       fetchReviews();
     }, [])
   );
-
+  // Function to fetch device location
   const fetchLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -52,7 +54,7 @@ export default function HomeScreen({ navigation, userId }) {
     setLocation(location);
     fetchRestaurants(location.coords.latitude, location.coords.longitude);
   };
-
+  // Function to fetch nearby restaurants based on latitude and longitude
   const fetchRestaurants = async (latitude, longitude) => {
     setLoading(true);
     try {
@@ -91,7 +93,7 @@ export default function HomeScreen({ navigation, userId }) {
       setLoading(false);
     }
   };
-
+  // Render a review item
   const renderReviewItem = ({ item }, navigation) => {
     return (
       <TouchableOpacity
@@ -104,7 +106,7 @@ export default function HomeScreen({ navigation, userId }) {
       </TouchableOpacity>
     );
   };
-
+  // Render a restaurant item
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
@@ -122,6 +124,7 @@ export default function HomeScreen({ navigation, userId }) {
       </TouchableOpacity>
     );
   };
+  // Render top header for "Top restaurants" and the button
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
@@ -135,7 +138,7 @@ export default function HomeScreen({ navigation, userId }) {
       </View>
     );
   };
-
+  // Render Daytalks header and the button
   const renderDaytalksHeader = () => {
     return (
       <View style={styles.daytalksHeaderContainer}>
@@ -149,14 +152,14 @@ export default function HomeScreen({ navigation, userId }) {
       </View>
     );
   };
-
+  // Render the HomeScreen component
   return (
     <View style={styles.container}>
       {renderHeader()}
       <FlatList
         data={restaurants}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id} // Define unique key for each item
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={width - 20}
@@ -169,7 +172,7 @@ export default function HomeScreen({ navigation, userId }) {
       {renderDaytalksHeader()}
       <FlatList
         data={reviews.slice(0, 5)}
-        renderItem={(item) => renderReviewItem(item, navigation)}
+        renderItem={(item) => renderReviewItem(item, navigation)} // Render method for each item
         keyExtractor={(item) => item._id}
         style={styles.reviewList}
         showsVerticalScrollIndicator={false}
