@@ -93,6 +93,8 @@ export default function ReviewDetailScreen({ route, userId }) {
             reviewId={review._id}
             comments={comments}
             setComments={setComments}
+            userId={userId}
+            userName={userName}
           />
         </View>
       </View>

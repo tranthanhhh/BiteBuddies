@@ -110,6 +110,13 @@ const CommentSchema = new mongoose.Schema({
   text: String,
   reviewId: { type: mongoose.Schema.Types.ObjectId, ref: "Review" },
   createdAt: { type: Date, default: Date.now },
+  replies: [
+    {
+      name: String,
+      text: String,
+      createdAt: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 const Comment = mongoose.model("Comment", CommentSchema);
@@ -393,6 +400,38 @@ app.put("/users/:userId/avatar", async (req, res) => {
       .status(500)
       .json({ error: "Internal server error", message: err.message });
   }
+  app.post("/comments/:commentId/replies", async (req, res) => {
+    try {
+      const { name, text } = req.body;
+      const commentId = req.params.commentId;
+      const comment = await Comment.findById(commentId);
+      if (!comment) {
+        return res.status(404).json({ error: "Comment not found" });
+      }
+      const reply = { name, text };
+      comment.replies.push(reply);
+      await comment.save();
+      res.status(201).json(comment);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/comments/:commentId/replies", async (req, res) => {
+    try {
+      const { commentId } = req.params;
+      const comment = await Comment.findById(commentId);
+      if (!comment) {
+        return res.status(404).json({ error: "Comment not found" });
+      }
+      const replies = comment.replies;
+      res.status(200).json(replies);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
 });
 
 // Start the server

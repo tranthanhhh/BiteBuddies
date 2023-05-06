@@ -20,6 +20,10 @@ export default function RestaurantReviewScreen({ route, userId }) {
   const [comments, setComments] = useState([]);
   const [user, setUser] = useState(null);
   const [commentInput, setCommentInput] = useState("");
+  const [replies, setReplies] = useState({});
+  const [replyInput, setReplyInput] = useState({});
+
+  const [replyInputVisible, setReplyInputVisible] = useState(null);
 
   const fetchRestaurantDetails = async (restaurantId) => {
     try {
@@ -68,6 +72,22 @@ export default function RestaurantReviewScreen({ route, userId }) {
         `https://test-db-1-senior.herokuapp.com/restaurants/${restaurantId}/comments`
       );
       setComments(response.data);
+
+      // Fetch replies for each comment
+      const replyPromises = response.data.map((comment) =>
+        axios.get(
+          `https://test-db-1-senior.herokuapp.com/restaurants/${restaurantId}/comments/${comment._id}/replies`
+        )
+      );
+
+      const repliesResponses = await Promise.all(replyPromises);
+
+      const newReplies = {};
+      response.data.forEach((comment, index) => {
+        newReplies[comment._id] = repliesResponses[index].data;
+      });
+
+      setReplies(newReplies);
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
@@ -109,13 +129,76 @@ export default function RestaurantReviewScreen({ route, userId }) {
     }
   };
 
+  const handlePostReply = async (commentId, replyText) => {
+    if (replyText.trim() !== "" && user) {
+      const userName = user.name || user.email;
+      try {
+        const response = await axios.post(
+          `https://test-db-1-senior.herokuapp.com/restaurants/${restaurantId}/comments/${commentId}/replies`,
+          {
+            name: userName,
+            text: replyText.trim(),
+          }
+        );
+        const newReply = {
+          name: userName,
+          text: replyText.trim(),
+        };
+        setReplies((prevReplies) => ({
+          ...prevReplies,
+          [commentId]: [...(prevReplies[commentId] || []), newReply],
+        }));
+
+        setReplyInput("");
+        setReplyInputVisible(null);
+      } catch (error) {
+        console.error("Error posting reply:", error);
+      }
+    }
+  };
+
   const renderComments = () => {
-    return comments.slice(0, 5).map((comment) => (
-      <View key={comment._id} style={styles.commentContainer}>
-        <Text style={styles.commentAuthor}>{comment.name}</Text>
-        <Text style={styles.commentText}>{comment.text}</Text>
-      </View>
-    ));
+    return comments.slice(0, 5).map((comment) => {
+      return (
+        <View key={comment._id} style={styles.commentContainer}>
+          <Text style={styles.commentAuthor}>{comment.name}</Text>
+          <Text style={styles.commentText}>{comment.text}</Text>
+          {replies[comment._id]?.map((reply, index) => (
+            <View key={index} style={styles.commentContainer}>
+              <Text style={styles.commentAuthor}>{reply.name}</Text>
+              <Text style={styles.commentText}>{reply.text}</Text>
+            </View>
+          ))}
+          <TouchableOpacity
+            style={styles.replyButton}
+            onPress={() => setReplyInputVisible(comment._id)}
+          >
+            <Text style={styles.replyButtonText}>Reply</Text>
+          </TouchableOpacity>
+          {replyInputVisible === comment._id && (
+            <View style={styles.replyInputContainer}>
+              <TextInput
+                style={styles.replyInput}
+                placeholder="Write a reply..."
+                value={replyInput[comment._id] || ""}
+                onChangeText={(text) =>
+                  setReplyInput({ ...replyInput, [comment._id]: text })
+                }
+              />
+              <TouchableOpacity
+                style={styles.replyButton}
+                onPress={() => {
+                  handlePostReply(comment._id, replyInput[comment._id]);
+                  setReplyInput({ ...replyInput, [comment._id]: "" });
+                }}
+              >
+                <Text style={styles.replyButtonText}>Reply</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      );
+    });
   };
 
   return (
@@ -261,5 +344,33 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     marginBottom: 3,
+  },
+  replyButtonText: {
+    color: "blue",
+    fontWeight: "bold",
+  },
+  replyInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 5,
+  },
+  replyInput: {
+    flex: 1,
+    borderColor: "#999",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginRight: 10,
+  },
+  postReplyButton: {
+    backgroundColor: "#0099ff",
+    borderRadius: 5,
+    padding: 5,
+  },
+  postReplyButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
